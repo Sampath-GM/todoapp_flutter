@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:todoapp/pages/login.dart';
+import 'package:todoapp/pages/registerpage.dart';
+import 'package:todoapp/pages/loginpage.dart';
 
 void main(){
   runApp(MyApp());
@@ -13,7 +14,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.light(),
-      home: Loginpage(),
+      home: 
+       RegisterPage(),
     );
   }
 }
