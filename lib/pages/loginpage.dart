@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:todoapp/pages/HomePage.dart';
 import 'package:http/http.dart' as http;
@@ -13,43 +12,11 @@ class Loginpage extends StatefulWidget {
 
 class _LoginpageState extends State<Loginpage> {
   final TextEditingController emailediter = TextEditingController();
-
   final TextEditingController passwordediter = TextEditingController();
 
   bool _isNotValidate = false;
 
-  void registerUser() async{
-    if(emailediter.text.isNotEmpty && passwordediter.text.isNotEmpty){
-   
-    var resBody ={
-      "email":emailediter.text,
-      "password":passwordediter.text
-    };
-
-    var response = await http.post(Uri.parse("http://192.168.48.63:3004/user/registration"),
-    headers: {"Content-Type":"application/json"},
-    body: jsonEncode(resBody),
-    );
-
-    var jsonResponse = jsonDecode(response.body);
-    print(jsonResponse['status']);
-    
-    if (jsonResponse['status']){
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) => Loginpage() ));
-
-    }
-    else{
-      print("SomeThing went Wrong");
-    }
-
-    } 
-    else{
-         setState(() {
-        _isNotValidate = true; 
-      });
-    }
-  }
-
+  
   @override
   Widget build(BuildContext context) {
 
@@ -96,7 +63,7 @@ class _LoginpageState extends State<Loginpage> {
                const SizedBox(height: 20,),
         
                      ElevatedButton(onPressed: (){
-                      registerUser();  
+                      // registerUser();  
                      },
                      style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.purple[300]
