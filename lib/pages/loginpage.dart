@@ -1,26 +1,72 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todoapp/pages/HomePage.dart';
 import 'package:http/http.dart' as http;
 
 class Loginpage extends StatefulWidget {
-   const Loginpage({super.key});
+  const Loginpage({super.key});
 
   @override
   State<Loginpage> createState() => _LoginpageState();
 }
 
 class _LoginpageState extends State<Loginpage> {
-  final TextEditingController emailediter = TextEditingController();
-  final TextEditingController passwordediter = TextEditingController();
+  final TextEditingController _emailediter = TextEditingController();
+  final TextEditingController _passwordediter = TextEditingController();
+  bool _isNotValidated = false; 
+  late SharedPreferences _preferences; 
+  String _loginError = ''; 
 
-  bool _isNotValidate = false;
+  @override
+  void initState() {
+    super.initState();
+    _initSharedPref(); 
+  }
 
-  
+  Future<void> _initSharedPref() async {
+    _preferences = await SharedPreferences.getInstance();
+  }
+  Future<void> _loginUser() async {
+    if (_emailediter.text.isNotEmpty && _passwordediter.text.isNotEmpty) {
+      final String url = Uri.parse("http://192.168.151.216:3009/user/login").toString();
+      final Map<String, String> reqBody = {
+        "email": _emailediter.text,
+        "password": _passwordediter.text,
+      };
+
+      final http.Response response = await http.post(
+        Uri.parse(url),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(reqBody),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+        if (jsonResponse['status'] as bool) { // Type cast for clarity
+          final String myToken = jsonResponse['token'];
+          await _preferences.setString('token', myToken);
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Homepage(token: myToken)));
+        } else {
+          setState(() {
+            _loginError = "Invalid login credentials."; // Set error message
+          });
+        }
+      } else {
+        _isNotValidated = true;
+        print("Error: ${response.statusCode}");
+      }
+    } else {
+      setState(() {
+        _isNotValidated = true; 
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-
-    return  Scaffold( 
+    return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -33,56 +79,69 @@ class _LoginpageState extends State<Loginpage> {
                   'assets/images/Login.png',
                   height: 400,
                 ),
-                 Padding(
+                Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextField(
-                    controller: emailediter,
+                    controller: _emailediter,
                     decoration: InputDecoration(
                       hintText: 'Email',
                       border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(8.0))),
-                          errorText: _isNotValidate?"Please Enter email":null
+                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      ),
+                      errorText: _isNotValidated ? "Please enter your email." : null,
                     ),
                   ),
                 ),
-               Padding(
-                  padding: EdgeInsets.all(8.0),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: TextField(
-                    controller: passwordediter,
+                    controller: _passwordediter,
+                    obscureText: true, // Hide password input
                     decoration: InputDecoration(
                       hintText: 'Password',
                       border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(8.0))),
-                          errorText: _isNotValidate?"Please Enter password":null
+                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      ),
+                      errorText: _isNotValidated ? "Please enter your password." : null,
                     ),
-                    
                   ),
                 ),
-               const SizedBox(height: 20,),
-        
-                     ElevatedButton(onPressed: (){
-                      // registerUser();  
-                     },
-                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.purple[300]
-                     ), 
-                    
-                    child: const Text("Login",
-                      style: TextStyle(
-                        color: Colors.white
-                      ),
-                    )),
-                  
-
-                 const SizedBox(height: 10,),
-                    //forgot password
-               const InkWell(
-                  child: Text(
-                    "Don't have an Account?Register",
+                if (_loginError.isNotEmpty) // Conditionally display error text
+                  Text(
+                    _loginError,
+                    style: TextStyle(color: Colors.red),
+                  ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _loginUser,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple[300],
+                  ),
+                  child: const Text(
+                    "Login",
                     style: TextStyle(
+                      color: Colors.white,
                     ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                 InkWell(
+                  child: RichText(
+                    text: const TextSpan(
+                      text: "Don't have an Account? ",
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: "Register",
+                          style: TextStyle(
+                            color: Colors.blue
+                          )
+                        )
+                      ]
+                    ),
+                    
                   ),
                 ),  
               ],
@@ -93,3 +152,4 @@ class _LoginpageState extends State<Loginpage> {
     );
   }
 }
+

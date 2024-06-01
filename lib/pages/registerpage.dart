@@ -1,7 +1,5 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:todoapp/pages/HomePage.dart';
 import 'package:http/http.dart' as http;
 import 'package:todoapp/pages/loginpage.dart';
 
@@ -13,6 +11,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _LoginpageState extends State<RegisterPage> {
+   final TextEditingController userediter = TextEditingController();
   final TextEditingController emailediter = TextEditingController();
 
   final TextEditingController passwordediter = TextEditingController();
@@ -22,14 +21,14 @@ class _LoginpageState extends State<RegisterPage> {
   void registerUser() async{
     if(emailediter.text.isNotEmpty && passwordediter.text.isNotEmpty){
    
-    var resBody ={
+    var reqBody ={
       "email":emailediter.text,
       "password":passwordediter.text
     };
 
-    var response = await http.post(Uri.parse("http://192.168.48.63:3004/user/registration"),
+    var response = await http.post(Uri.parse("http://192.168.151.216:3009/user/registration"),
     headers: {"Content-Type":"application/json"},
-    body: jsonEncode(resBody),
+    body: jsonEncode(reqBody),
     );
 
     var jsonResponse = jsonDecode(response.body);
@@ -65,7 +64,20 @@ class _LoginpageState extends State<RegisterPage> {
               children: <Widget>[
                 Image.asset(
                   'assets/images/Signup.png',
-                  height: 400,
+                  height: 350,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: TextField(
+                    controller: userediter,
+                    decoration: InputDecoration(                    
+                      hintText: 'User Name',
+                      border: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(8.0))),
+                          errorText: _isNotValidate?"Please Enter username":null
+                    ),
+                  ),
                 ),
                  Padding(
                   padding: const EdgeInsets.all(12.0),
@@ -81,17 +93,17 @@ class _LoginpageState extends State<RegisterPage> {
                   ),
                 ),
                Padding(
-                  padding: EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(12.0),
                   child: TextField(
                     controller: passwordediter,
-                    decoration: InputDecoration(
+                    obscureText: true,
+                    decoration: InputDecoration(                    
                       hintText: 'Password',
                       border: const OutlineInputBorder(
                         borderRadius: BorderRadius.all(
                           Radius.circular(8.0))),
                           errorText: _isNotValidate?"Please Enter password":null
                     ),
-                    
                   ),
                 ),
                const SizedBox(height: 20,),
@@ -112,11 +124,23 @@ class _LoginpageState extends State<RegisterPage> {
 
                  const SizedBox(height: 10,),
                     //forgot password
-               const InkWell(
-                  child: Text(
-                    'Already Have an Account?Signin',
-                    style: TextStyle(
+                InkWell(
+                  child: RichText(
+                    text: const TextSpan(
+                      text: "Already have an Account? ",
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: "Signin",
+                          style: TextStyle(
+                            color: Colors.blue
+                          )
+                        )
+                      ]
                     ),
+                    
                   ),
                 ),  
               ],
