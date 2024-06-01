@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todoapp/constants/url.dart';
 import 'package:todoapp/pages/HomePage.dart';
 import 'package:http/http.dart' as http;
 
@@ -29,7 +30,7 @@ class _LoginpageState extends State<Loginpage> {
   }
   Future<void> _loginUser() async {
     if (_emailediter.text.isNotEmpty && _passwordediter.text.isNotEmpty) {
-      final String url = Uri.parse("http://192.168.151.216:3009/user/login").toString();
+      final String url = Uri.parse(ApiEndpoints.login).toString();
       final Map<String, String> reqBody = {
         "email": _emailediter.text,
         "password": _passwordediter.text,

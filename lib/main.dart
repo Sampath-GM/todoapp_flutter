@@ -1,20 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todoapp/pages/HomePage.dart';
 import 'package:todoapp/pages/registerpage.dart';
 import 'package:todoapp/pages/loginpage.dart';
 
-void main(){
-  runApp(MyApp());
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  runApp(
+    MyApp(
+      token:pref.getString('token')
+      ));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+
+  final token;
+  const MyApp({
+    @required this.token,
+    super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.light(),
-      home:RegisterPage(),
+      home:(JwtDecoder.isExpired(token) == false)?Homepage(token: token) :const Loginpage() 
     );
   }
 }

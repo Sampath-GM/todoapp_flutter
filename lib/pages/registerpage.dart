@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:todoapp/constants/url.dart';
 import 'package:todoapp/pages/loginpage.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -26,7 +27,7 @@ class _LoginpageState extends State<RegisterPage> {
       "password":passwordediter.text
     };
 
-    var response = await http.post(Uri.parse("http://192.168.151.216:3009/user/registration"),
+    var response = await http.post(Uri.parse(ApiEndpoints.register),
     headers: {"Content-Type":"application/json"},
     body: jsonEncode(reqBody),
     );
