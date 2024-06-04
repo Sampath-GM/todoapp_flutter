@@ -10,7 +10,6 @@ class RegisterPage extends StatefulWidget {
   @override
   State<RegisterPage> createState() => _LoginpageState();
 }
-
 class _LoginpageState extends State<RegisterPage> {
    final TextEditingController userediter = TextEditingController();
   final TextEditingController emailediter = TextEditingController();
@@ -65,62 +64,76 @@ class _LoginpageState extends State<RegisterPage> {
               children: <Widget>[
                 Image.asset(
                   'assets/images/Signup.png',
-                  height: 350,
+                  height: 250,
+                  width: 250,
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(12.0),
+                  padding: const EdgeInsets.only(left: 30.0,right: 30.0,bottom: 10.0,top: 20.0),
                   child: TextField(
                     controller: userediter,
                     decoration: InputDecoration(                    
-                      hintText: 'User Name',
+                      // hintText: 'Enter User Name',
+                      labelText: 'User Name',
                       border: const OutlineInputBorder(
                         borderRadius: BorderRadius.all(
-                          Radius.circular(8.0))),
+                          Radius.circular(18.0))),
                           errorText: _isNotValidate?"Please Enter username":null
                     ),
                   ),
                 ),
                  Padding(
-                  padding: const EdgeInsets.all(12.0),
+                  padding: const EdgeInsets.only(left: 30.0,right: 30.0,bottom: 10.0),
                   child: TextField(
                     controller: emailediter,
                     decoration: InputDecoration(
-                      hintText: 'Email',
+                      // hintText: 'Enter Email',
+                      labelText: 'Email',
                       border: const OutlineInputBorder(
                         borderRadius: BorderRadius.all(
-                          Radius.circular(8.0))),
+                          Radius.circular(18.0))),
                           errorText: _isNotValidate?"Please Enter email":null
                     ),
                   ),
                 ),
                Padding(
-                  padding: const EdgeInsets.all(12.0),
+                  padding: const EdgeInsets.only(left: 30.0,right: 30.0,bottom: 10.0),
                   child: TextField(
                     controller: passwordediter,
                     obscureText: true,
                     decoration: InputDecoration(                    
-                      hintText: 'Password',
+                      // hintText: 'Enter Password',
+                      labelText: 'Password', 
                       border: const OutlineInputBorder(
                         borderRadius: BorderRadius.all(
-                          Radius.circular(8.0))),
+                          Radius.circular(18.0))),
                           errorText: _isNotValidate?"Please Enter password":null
                     ),
                   ),
                 ),
-               const SizedBox(height: 20,),
+               const SizedBox(height: 10,),
         
-                     ElevatedButton(onPressed: (){
+                     ElevatedButton(
+                      onPressed: (){
                       registerUser();  
                      },
                      style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.purple[300]
+                      backgroundColor: Colors.purple[300],         
                      ), 
                     
-                    child: const Text("Register",
-                      style: TextStyle(
-                        color: Colors.white
+                    child:  Container(
+                      width: 230,
+                      height: 50,
+                      child: Center(
+                        child: Text(
+                          "Register",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18
+                          ),
+                          ),
                       ),
-                    )),
+                    )
+                    ),
                   
 
                  const SizedBox(height: 10,),

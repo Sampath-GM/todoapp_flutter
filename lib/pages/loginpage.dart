@@ -78,30 +78,31 @@ class _LoginpageState extends State<Loginpage> {
               children: <Widget>[
                 Image.asset(
                   'assets/images/Login.png',
-                  height: 400,
+                  height: 250,
+                  width: 250,
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.only(left: 30.0,right: 30.0,bottom: 10.0,top: 20.0),
                   child: TextField(
                     controller: _emailediter,
                     decoration: InputDecoration(
                       hintText: 'Email',
                       border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                        borderRadius: BorderRadius.all(Radius.circular(18.0)),
                       ),
                       errorText: _isNotValidated ? "Please enter your email." : null,
                     ),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.only(left: 30.0,right: 30.0,bottom: 10.0,top: 20.0),
                   child: TextField(
                     controller: _passwordediter,
                     obscureText: true, // Hide password input
                     decoration: InputDecoration(
                       hintText: 'Password',
                       border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                        borderRadius: BorderRadius.all(Radius.circular(18.0)),
                       ),
                       errorText: _isNotValidated ? "Please enter your password." : null,
                     ),
@@ -118,12 +119,25 @@ class _LoginpageState extends State<Loginpage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.purple[300],
                   ),
-                  child: const Text(
-                    "Login",
-                    style: TextStyle(
-                      color: Colors.white,
+                  child: Container(
+                    width: 230,
+                    height: 50,
+                    child: const Center(
+                      child: Text(
+                        "Login",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
+                        ),
                     ),
-                  ),
+                  ) 
+                  //  Text(
+                  //   "Login",
+                  //   style: TextStyle(
+                  //     color: Colors.white,
+                  //   ),
+                  // ),
                 ),
                 const SizedBox(height: 10),
                  InkWell(

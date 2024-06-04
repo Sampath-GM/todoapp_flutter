@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todoapp/pages/HomePage.dart';
 import 'package:todoapp/pages/registerpage.dart';
 import 'package:todoapp/pages/loginpage.dart';
+import 'package:todoapp/pages/TodoHome.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +27,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.light(),
-      home:(JwtDecoder.isExpired(token) == false)?Homepage(token: token) :const Loginpage() 
+      home:Homepage(token: token)
+      // (JwtDecoder.isExpired(token) == false)?Homepage(token: token) :const Loginpage() 
     );
   }
 }
