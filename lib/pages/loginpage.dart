@@ -1,39 +1,44 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todoapp/constants/url.dart';
 import 'package:todoapp/pages/HomePage.dart';
 import 'package:http/http.dart' as http;
+import 'package:todoapp/pages/registerpage.dart';
 
-class Loginpage extends StatefulWidget {
-  const Loginpage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
-  State<Loginpage> createState() => _LoginpageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginpageState extends State<Loginpage> {
-  final TextEditingController _emailediter = TextEditingController();
-  final TextEditingController _passwordediter = TextEditingController();
-  bool _isNotValidated = false; 
-  late SharedPreferences _preferences; 
-  String _loginError = ''; 
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _isNotValidated = false;
+  late SharedPreferences _preferences;
+  String _loginError = '';
 
   @override
   void initState() {
     super.initState();
-    _initSharedPref(); 
+    _initSharedPref();
   }
 
   Future<void> _initSharedPref() async {
     _preferences = await SharedPreferences.getInstance();
   }
+
   Future<void> _loginUser() async {
-    if (_emailediter.text.isNotEmpty && _passwordediter.text.isNotEmpty) {
+    if (_emailController.text.isNotEmpty && _passwordController.text.isNotEmpty) {
       final String url = Uri.parse(ApiEndpoints.login).toString();
       final Map<String, String> reqBody = {
-        "email": _emailediter.text,
-        "password": _passwordediter.text,
+        "email": _emailController.text,
+        "password": _passwordController.text,
       };
 
       final http.Response response = await http.post(
@@ -44,23 +49,33 @@ class _LoginpageState extends State<Loginpage> {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-        if (jsonResponse['status'] as bool) { // Type cast for clarity
+        if (jsonResponse['status'] as bool) {
           final String myToken = jsonResponse['token'];
           await _preferences.setString('token', myToken);
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Homepage(token: myToken)));
+          if (!JwtDecoder.isExpired(myToken)) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => Homepage(token: myToken)),
+            );
+          } else {
+            setState(() {
+              _loginError = "Token has expired.";
+            });
+          }
         } else {
           setState(() {
-            _loginError = "Invalid login credentials."; // Set error message
+            _loginError = "Invalid login credentials.";
           });
         }
       } else {
-        _isNotValidated = true;
-        print("Error: ${response.statusCode}");
+        setState(() {
+          _isNotValidated = true;
+          _loginError = "Error: ${response.statusCode}";
+        });
       }
     } else {
       setState(() {
-        _isNotValidated = true; 
+        _isNotValidated = true;
       });
     }
   }
@@ -82,9 +97,9 @@ class _LoginpageState extends State<Loginpage> {
                   width: 250,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 30.0,right: 30.0,bottom: 10.0,top: 20.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
                   child: TextField(
-                    controller: _emailediter,
+                    controller: _emailController,
                     decoration: InputDecoration(
                       hintText: 'Email',
                       border: const OutlineInputBorder(
@@ -95,10 +110,10 @@ class _LoginpageState extends State<Loginpage> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 30.0,right: 30.0,bottom: 10.0,top: 20.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
                   child: TextField(
-                    controller: _passwordediter,
-                    obscureText: true, // Hide password input
+                    controller: _passwordController,
+                    obscureText: true,
                     decoration: InputDecoration(
                       hintText: 'Password',
                       border: const OutlineInputBorder(
@@ -108,7 +123,7 @@ class _LoginpageState extends State<Loginpage> {
                     ),
                   ),
                 ),
-                if (_loginError.isNotEmpty) // Conditionally display error text
+                if (_loginError.isNotEmpty)
                   Text(
                     _loginError,
                     style: TextStyle(color: Colors.red),
@@ -129,20 +144,21 @@ class _LoginpageState extends State<Loginpage> {
                           color: Colors.white,
                           fontSize: 18,
                         ),
-                        ),
+                      ),
                     ),
-                  ) 
-                  //  Text(
-                  //   "Login",
-                  //   style: TextStyle(
-                  //     color: Colors.white,
-                  //   ),
-                  // ),
+                  ),
                 ),
                 const SizedBox(height: 10),
-                 InkWell(
+                InkWell(
+                  onTap: () {
+                    // Navigate to Register page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => RegisterPage()),
+                    );
+                  },
                   child: RichText(
-                    text: const TextSpan(
+                    text:  TextSpan(
                       text: "Don't have an Account? ",
                       style: TextStyle(
                         color: Colors.black,
@@ -151,20 +167,26 @@ class _LoginpageState extends State<Loginpage> {
                         TextSpan(
                           text: "Register",
                           style: TextStyle(
-                            color: Colors.blue
-                          )
-                        )
-                      ]
+                            color: Colors.blue,
+                          ),
+                           recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => RegisterPage()),
+                              );
+                            },
+                        ),
+                      ],
                     ),
-                    
                   ),
-                ),  
+                ),
               ],
-            )
             ),
-        ),
           ),
+        ),
+      ),
     );
   }
 }
-

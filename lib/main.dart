@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.light(),
-      home:Homepage(token: token)
+      home:RegisterPage()
       // (JwtDecoder.isExpired(token) == false)?Homepage(token: token) :const Loginpage() 
     );
   }

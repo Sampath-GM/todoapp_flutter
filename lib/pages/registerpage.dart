@@ -1,59 +1,62 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:todoapp/constants/url.dart';
 import 'package:todoapp/pages/loginpage.dart';
 
 class RegisterPage extends StatefulWidget {
-   const RegisterPage({super.key});
+  const RegisterPage({super.key});
 
   @override
-  State<RegisterPage> createState() => _LoginpageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
-class _LoginpageState extends State<RegisterPage> {
-   final TextEditingController userediter = TextEditingController();
-  final TextEditingController emailediter = TextEditingController();
 
+class _RegisterPageState extends State<RegisterPage> {
+  final TextEditingController userediter = TextEditingController();
+  final TextEditingController emailediter = TextEditingController();
   final TextEditingController passwordediter = TextEditingController();
 
   bool _isNotValidate = false;
 
-  void registerUser() async{
-    if(emailediter.text.isNotEmpty && passwordediter.text.isNotEmpty){
-   
-    var reqBody ={
-      "email":emailediter.text,
-      "password":passwordediter.text
-    };
+  void registerUser() async {
+    try{
+    if (emailediter.text.isNotEmpty && passwordediter.text.isNotEmpty) {
+      var reqBody = {
+        "email": emailediter.text,
+        "password": passwordediter.text
+      };
 
-    var response = await http.post(Uri.parse(ApiEndpoints.register),
-    headers: {"Content-Type":"application/json"},
-    body: jsonEncode(reqBody),
-    );
+      var response = await http.post(
+        Uri.parse("http://192.168.151.216:3009/user/registration"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(reqBody),
+      );
 
-    var jsonResponse = jsonDecode(response.body);
-    print(jsonResponse['status']);
-    
-    if (jsonResponse['status']){
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) => Loginpage() ));
+      var jsonResponse = jsonDecode(response.body);
+      print(jsonResponse['status']);
 
-    }
-    else{
-      print("SomeThing went Wrong");
-    }
-
-    } 
-    else{
-         setState(() {
-        _isNotValidate = true; 
+      if (jsonResponse['status']) {
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => LoginPage()));
+      } else {
+        print("SomeThing went Wrong");
+      }
+    } else {
+      setState(() {
+        _isNotValidate = true;
       });
+    }
+    }
+    catch(Error){
+      print(Error);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-
-    return  Scaffold( 
+    return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -68,100 +71,100 @@ class _LoginpageState extends State<RegisterPage> {
                   width: 250,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 30.0,right: 30.0,bottom: 10.0,top: 20.0),
+                  padding: const EdgeInsets.only(
+                      left: 30.0, right: 30.0, bottom: 10.0, top: 20.0),
                   child: TextField(
                     controller: userediter,
-                    decoration: InputDecoration(                    
-                      // hintText: 'Enter User Name',
+                    decoration: InputDecoration(
                       labelText: 'User Name',
                       border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(18.0))),
-                          errorText: _isNotValidate?"Please Enter username":null
+                        borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                      ),
+                      errorText: _isNotValidate ? "Please Enter username" : null,
                     ),
                   ),
                 ),
-                 Padding(
-                  padding: const EdgeInsets.only(left: 30.0,right: 30.0,bottom: 10.0),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
                   child: TextField(
                     controller: emailediter,
                     decoration: InputDecoration(
-                      // hintText: 'Enter Email',
                       labelText: 'Email',
                       border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(18.0))),
-                          errorText: _isNotValidate?"Please Enter email":null
+                        borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                      ),
+                      errorText: _isNotValidate ? "Please Enter email" : null,
                     ),
                   ),
                 ),
-               Padding(
-                  padding: const EdgeInsets.only(left: 30.0,right: 30.0,bottom: 10.0),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
                   child: TextField(
                     controller: passwordediter,
                     obscureText: true,
-                    decoration: InputDecoration(                    
-                      // hintText: 'Enter Password',
-                      labelText: 'Password', 
+                    decoration: InputDecoration(
+                      labelText: 'Password',
                       border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(18.0))),
-                          errorText: _isNotValidate?"Please Enter password":null
+                        borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                      ),
+                      errorText: _isNotValidate ? "Please Enter password" : null,
                     ),
                   ),
                 ),
-               const SizedBox(height: 10,),
-        
-                     ElevatedButton(
-                      onPressed: (){
-                      registerUser();  
-                     },
-                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.purple[300],         
-                     ), 
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    registerUser();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple[300],
                     
-                    child:  Container(
-                      width: 230,
-                      height: 50,
-                      child: Center(
-                        child: Text(
-                          "Register",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18
-                          ),
-                          ),
+                  ),
+                  child: Container(
+                    width: 230,
+                    height: 50,
+                    child: const Center(
+                      child: Text(
+                        "Register",
+                        style: TextStyle(color: Colors.white, fontSize: 18),
                       ),
-                    )
                     ),
-                  
-
-                 const SizedBox(height: 10,),
-                    //forgot password
+                  ),
+                ),
+                const SizedBox(height: 10),
                 InkWell(
                   child: RichText(
-                    text: const TextSpan(
+                    text: TextSpan(
                       text: "Already have an Account? ",
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.black,
                       ),
                       children: [
                         TextSpan(
                           text: "Signin",
-                          style: TextStyle(
-                            color: Colors.blue
-                          )
-                        )
-                      ]
+                          style: const TextStyle(
+                            color: Colors.blue,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => LoginPage()),
+                              );
+                            },
+                        ),
+                      ],
                     ),
-                    
                   ),
-                ),  
+                ),
               ],
-            )
             ),
-        ),
           ),
+        ),
+      ),
     );
   }
 }
