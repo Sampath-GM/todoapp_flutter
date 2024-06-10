@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData.light(),
       home:RegisterPage()
-      // (JwtDecoder.isExpired(token) == false)?Homepage(token: token) :const Loginpage() 
+      // (JwtDecoder. isExpired(token) == false)?Homepage(token: token) :const Loginpage() 
     );
   }
 }
